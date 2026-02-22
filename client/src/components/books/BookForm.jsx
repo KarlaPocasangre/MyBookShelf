@@ -1,13 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function BookForm({ onSubmit, submitting = false }) {
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    imageUrl: "",
-    status: "IN_PROGRESS",
-    isFavorite: false,
-  });
+const DEFAULT_VALUES = {
+  title: "",
+  description: "",
+  imageUrl: "",
+  status: "IN_PROGRESS",
+  isFavorite: false,
+};
+
+export default function BookForm({
+  onSubmit,
+  submitting = false,
+  initialValues,
+}) {
+  const [form, setForm] = useState(DEFAULT_VALUES);
+
+  useEffect(() => {
+    if (initialValues) {
+      setForm({ ...DEFAULT_VALUES, ...initialValues });
+    }
+  }, [initialValues]);
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
