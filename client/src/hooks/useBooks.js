@@ -24,8 +24,15 @@ export function useBooks() {
   }
 
   async function addBook(payload) {
-    const newBook = await createBook(payload);
-    setBooks((prev) => [...prev, newBook]);
+    try {
+      setError(null);
+      const newBook = await createBook(payload);
+      setBooks((prev) => [...prev, newBook]);
+      return newBook;
+    } catch (err) {
+      setError("Error al crear libro");
+      throw err;
+    }
   }
 
   async function editBook(id, payload) {
@@ -34,8 +41,14 @@ export function useBooks() {
   }
 
   async function removeBook(id) {
-    await deleteBook(id);
-    setBooks((prev) => prev.filter((book) => book.id !== id));
+    try {
+      setError(null);
+      await deleteBook(id);
+      setBooks((prev) => prev.filter((book) => book.id !== id));
+    } catch (err) {
+      setError("Error al eliminar libro");
+      throw err;
+    }
   }
 
   useEffect(() => {

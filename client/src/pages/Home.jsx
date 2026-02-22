@@ -1,7 +1,8 @@
 import { useBooks } from "../hooks/useBooks";
+import BookList from "../components/books/BookList";
 
 export default function Home() {
-  const { books, loading, error } = useBooks();
+  const { books, loading, error, removeBook, editBook } = useBooks();
 
   if (loading) return <p className="p-4">Cargando libros...</p>;
   if (error) return <p className="p-4 text-danger">{error}</p>;
@@ -13,13 +14,7 @@ export default function Home() {
       {books.length === 0 ? (
         <p>No hay libros aún.</p>
       ) : (
-        <ul className="list-group">
-          {books.map((book) => (
-            <li key={book.id} className="list-group-item">
-              <strong>{book.title}</strong> — {book.status}
-            </li>
-          ))}
-        </ul>
+        <BookList books={books} onDelete={removeBook} onUpdate={editBook} />
       )}
     </div>
   );
