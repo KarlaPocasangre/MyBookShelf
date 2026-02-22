@@ -1,10 +1,11 @@
 const booksService = require("../services/books.service");
 
-function getAll(req, res) {
-  const books = booksService.getAllBooks();
+async function getAll(req, res) {
+  const books = await booksService.getAllBooks();
   res.json({ data: books });
 }
-function create(req, res) {
+
+async function create(req, res) {
   const { title } = req.body;
 
   if (!title || title.trim().length < 2) {
@@ -14,12 +15,12 @@ function create(req, res) {
     });
   }
 
-  const created = booksService.createBook(req.body);
+  const created = await booksService.createBook(req.body);
   return res.status(201).json({ data: created });
 }
 
-function getById(req, res) {
-  const book = booksService.getBookById(req.params.id);
+async function getById(req, res) {
+  const book = await booksService.getBookById(req.params.id);
 
   if (!book) {
     return res.status(404).json({
@@ -31,8 +32,8 @@ function getById(req, res) {
   res.json({ data: book });
 }
 
-function update(req, res) {
-  const updated = booksService.updateBook(req.params.id, req.body);
+async function update(req, res) {
+  const updated = await booksService.updateBook(req.params.id, req.body);
 
   if (!updated) {
     return res.status(404).json({
@@ -44,8 +45,8 @@ function update(req, res) {
   res.json({ data: updated });
 }
 
-function remove(req, res) {
-  const deleted = booksService.deleteBook(req.params.id);
+async function remove(req, res) {
+  const deleted = await booksService.deleteBook(req.params.id);
 
   if (!deleted) {
     return res.status(404).json({

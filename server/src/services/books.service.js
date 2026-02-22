@@ -1,64 +1,57 @@
-// Simulamos una "DB" en memoria (temporal)
-// En el Hito 2 lo reemplazamos por DB real.
-const books = [
-  {
-    id: "1",
-    title: "Clean Code",
-    description: "Un clásico para escribir código mantenible.",
-    imageUrl: "",
-    status: "IN_PROGRESS",
-    isFavorite: true,
-  },
-  {
-    id: "2",
-    title: "The Pragmatic Programmer",
-    description: "Mentalidad práctica para devs.",
-    imageUrl: "",
-    status: "READ",
-    isFavorite: false,
-  },
-];
+const prisma = require("../db/prisma");
 
-function getAllBooks() {
-  return books;
+async function getAllBooks() {
+  return prisma.book.findMany({ orderBy: { createdAt: "desc" } });
 }
 
-function createBook(payload) {
-  const newBook = {
-    id: crypto.randomUUID(),
-    title: payload.title.trim(),
-    description: payload.description?.trim() || "",
-    imageUrl: payload.imageUrl?.trim() || "",
-    status: payload.status || "IN_PROGRESS",
-    isFavorite: Boolean(payload.isFavorite),
-  };
-
-  books.push(newBook);
-  return newBook;
+async function createBook(data) {
+  return prisma.book.create({
+    data: {
+      title: data.title?.trim(),
+      description: data.description?.trim() || "",
+      imageUrl: data.imageUrl?.trim() || "",
+      status: data.status || "IN_PROGRESS",
+      isFavorite: Boolean(data.isFavorite),
+    },
+  });
 }
 
-function getBookById(id) {
-  return books.find((book) => book.id === id);
+async function getBookById(id) {
+  return prisma.book.findUnique({ where: { id } });
 }
 
-function updateBook(id, payload) {
-  const index = books.findIndex((book) => book.id === id);
-  if (index === -1) return null;
-
-  books[index] = {
-    ...books[index],
-    ...payload,
-  };
-
-  return books[index];
+async function updateBook(id, data) {
+  try {
+    return await prisma.book.update({
+      where: { id },
+      data: {
+        ...(data.title !== undefined ? { title: data.title.trim() } : {}),
+        ...(data.description !== undefined
+          ? { description: data.description.trim() }
+          : {}),
+        ...(data.imageUrl !== undefined
+          ? { imageUrl: data.imageUrl.trim() }
+          : {}),
+        ...(data.status !== undefined ? { status: data.status } : {}),
+        ...(data.isFavorite !== undefined
+          ? { isFavorite: Boolean(data.isFavorite) }
+          : {}),
+      },
+    });
+  } catch (e) {
+    if (e.code === "P2025") return null;
+    throw e;
+  }
 }
 
-function deleteBook(id) {
-  const index = books.findIndex((book) => book.id === id);
-  if (index === -1) return false;
-
-  books.splice(index, 1);
-  return true;
+async function deleteBook(id) {
+  try {
+    await prisma.book.delete({ where: { id } });
+    return true;
+  } catch (e) {
+    if (e.code === "P2025") return false;
+    throw e;
+  }
 }
 
 module.exports = {

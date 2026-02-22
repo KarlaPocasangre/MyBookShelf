@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+ }
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum BookStatus {
+  IN_PROGRESS
+  READ
+  WISHLIST
+}
+
+model Book {
+  id          String     @id @default(uuid())
+  title       String
+  description String?    @default("")
+  imageUrl    String?    @default("")
+  status      BookStatus @default(IN_PROGRESS)
+  isFavorite  Boolean    @default(false)
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
