@@ -1,0 +1,23 @@
+{
+  "name": "mybookshelf",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KarlaPocasangre/MyBookShelf.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KarlaPocasangre/MyBookShelf/issues"
+  },
+  "homepage": "https://github.com/KarlaPocasangre/MyBookShelf#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
