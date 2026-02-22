@@ -1,5 +1,6 @@
 import Swal from "sweetalert2";
 import confetti from "canvas-confetti";
+import { BOOK_STATUS_LABEL } from "../../utils/constants";
 
 export default function BookCard({ book, onDelete, onUpdate }) {
   async function handleDelete() {
@@ -50,6 +51,27 @@ export default function BookCard({ book, onDelete, onUpdate }) {
     }
   }
 
+  async function handleToggleFavorite() {
+    try {
+      await onUpdate(book.id, { isFavorite: !book.isFavorite });
+
+      Swal.fire({
+        icon: "success",
+        title: book.isFavorite
+          ? "Quitado de favoritos"
+          : "Agregado a favoritos",
+        timer: 900,
+        showConfirmButton: false,
+      });
+    } catch {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo actualizar favorito.",
+      });
+    }
+  }
+
   return (
     <li className="list-group-item d-flex justify-content-between align-items-center">
       <div className="me-3">
@@ -60,7 +82,9 @@ export default function BookCard({ book, onDelete, onUpdate }) {
       </div>
 
       <div className="d-flex align-items-center gap-2">
-        <span className="badge text-bg-secondary">{book.status}</span>
+        <span className="badge text-bg-secondary">
+          {BOOK_STATUS_LABEL[book.status] ?? book.status}
+        </span>
         {book.status === "IN_PROGRESS" && (
           <button
             className="btn btn-outline-success btn-sm"
@@ -69,6 +93,13 @@ export default function BookCard({ book, onDelete, onUpdate }) {
             Marcar como leído
           </button>
         )}
+        <button
+          className={`btn btn-sm ${book.isFavorite ? "btn-warning" : "btn-outline-warning"}`}
+          onClick={handleToggleFavorite}
+          title="Favorito"
+        >
+          {book.isFavorite ? "★" : "☆"}
+        </button>
         <button
           className="btn btn-outline-danger btn-sm"
           onClick={handleDelete}
